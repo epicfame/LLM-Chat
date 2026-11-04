@@ -248,7 +248,20 @@ export function ChatPage() {
       }
       footer={
         <form className={styles.formInput} onSubmit={handlePromptInput}>
-          <Paperclip />
+          <span
+            className={styles.tooltipWrapper}
+            data-tooltip="Attachment coming soon!"
+            tabIndex={0}
+          >
+            <button
+              type="button"
+              className={styles.iconButton}
+              disabled
+              aria-label="Attachment is not available yet"
+            >
+              <Paperclip size={20} />
+            </button>
+          </span>
           <ChatTextarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
