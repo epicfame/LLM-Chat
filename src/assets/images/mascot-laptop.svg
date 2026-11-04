@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="480" height="400" role="img" aria-label="Maskot mengetik di laptop">
+<title>Maskot mengetik di laptop</title>
+<ellipse cx="118" cy="184" rx="92" ry="6" fill="#FDE0CB"/><g transform="translate(120 118) scale(0.8)"><path d="M 0 -68 C 32 -68 56 -42 57 0 C 58 40 40 62 2 62 C -38 62 -57 42 -57 6 C -57 -36 -34 -68 0 -68 Z" fill="#FB923C" /><ellipse cx="-10" cy="-28" rx="4.2" ry="5.2" fill="#3B2416"/><ellipse cx="16" cy="-30" rx="4.2" ry="5.2" fill="#3B2416"/><g transform="translate(2 -60) rotate(8)">
+  <clipPath id="cap-laptop"><path d="M -40 14 C -40 -26 36 -28 38 12 Q 0 0 -40 14 Z"/></clipPath>
+  <line x1="0" y1="-18" x2="0" y2="-30" stroke="#4F95D6" stroke-width="3.5" stroke-linecap="round"/>
+  <ellipse cx="-15" cy="-32" rx="16" ry="5.5" fill="#4F95D6" transform="rotate(-12 -15 -32)"/>
+  <ellipse cx="15" cy="-32" rx="16" ry="5.5" fill="#4F95D6" transform="rotate(12 15 -32)"/>
+  <circle cx="0" cy="-31" r="3.5" fill="#3E7FC0"/>
+  <g clip-path="url(#cap-laptop)">
+    <polygon points="-60,-40 -16,-40 -12,20 -60,20" fill="#FB7185"/>
+    <polygon points="-16,-40 14,-40 12,20 -12,20" fill="#6CCBC0"/>
+    <polygon points="14,-40 60,-40 60,20 12,20" fill="#FBBF24"/>
+  </g>
+</g></g><path d="M 52 108 L 140 100 Q 146 100 147 106 L 152 168 Q 152 174 146 174 L 60 176 Q 54 176 54 170 L 48 114 Q 48 108 52 108 Z" fill="#CDD1DA" stroke="#B4BAC6" stroke-width="2"/><rect x="40" y="172" width="150" height="9" rx="4.5" fill="#B9BFCB"/><path d="M 99 131 Q 99 140 108 140 Q 99 140 99 149 Q 99 140 90 140 Q 99 140 99 131 Z" fill="#8E95A3"/><circle cx="158" cy="166" r="7.5" fill="#F5862F"/><circle cx="48" cy="168" r="7.5" fill="#F5862F"/><ellipse cx="186" cy="46" rx="38" ry="24" fill="#FCE3D6"/><path d="M 162 62 L 156 78 L 174 66 Z" fill="#FCE3D6"/><circle cx="172" cy="46" r="4" fill="#5B4A44"/><circle cx="186" cy="46" r="4" fill="#5B4A44"/><circle cx="200" cy="46" r="4" fill="#5B4A44"/>
+</svg>

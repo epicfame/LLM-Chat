@@ -1,15 +1,19 @@
-import logo from "@assets/react.svg";
+import logo from "@assets/logo/logo-dumbai-horizontal.svg";
 import { ModelSelection } from "./ModelSelection";
 import styles from "./ChatHeader.module.css";
 
-export function ChatHeader() {
+export function ChatHeader({ selectedModel, onModelChange }) {
   return (
-    <div className={styles.header}>
-      <div className={styles.logoHeader}>
-        <img src={logo} />
-        <h2 className={styles.title}>AI Chat</h2>
+    <div className={styles.container}>
+      <div className={styles.brand}>
+        <img src={logo} alt="DumbChat" className={styles.logo} />
       </div>
-      <ModelSelection options={['Claude', 'Deepseek']}/>
+
+      <ModelSelection
+        options={["nvidia/nemotron-3-ultra-550b-a55b:free"]}
+        value={selectedModel}
+        onChange={onModelChange}
+      />
     </div>
   );
 }
