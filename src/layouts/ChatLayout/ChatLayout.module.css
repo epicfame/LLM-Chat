@@ -1,0 +1,21 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    padding: 12px;
+}
+.header {
+    flex-shrink: 0;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.footer {
+    flex-shrink: 0;
+}

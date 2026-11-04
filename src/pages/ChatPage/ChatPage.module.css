@@ -1,0 +1,55 @@
+.formInput {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgb(186, 183, 183);
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.submitButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background: rgb(0, 128, 255);
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.chatBody {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 10px 50px;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+.chatBody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chatBody::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chatBody::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.textRight {
+    display: block;
+    max-width: 400px;
+    overflow-wrap: break-word;
+    align-self: flex-end;
+    background: grey;
+    border-radius: 12px;
+    padding: 6px 10px;
+}
+
+.textLeft {
+    align-self: flex-start;
+}
