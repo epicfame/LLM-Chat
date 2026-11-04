@@ -20,13 +20,15 @@ export function ChatPage() {
 
   const handlePromptInput = async (e) => {
     e.preventDefault();
-    if (!prompt.trim()) {
-      return;
-    }
+
+    const content = prompt.trim();
+
+    if (!content || isLoading) return;
+
     const userMessage = {
       id: uuidv7(),
       role: "user",
-      content: prompt,
+      content,
     };
 
     const assistantMessage = {
@@ -36,63 +38,189 @@ export function ChatPage() {
       status: "loading",
     };
 
+    // Conversation history untuk dikirim ke API
     const newMessages = [...messages, userMessage];
 
+    // Tampilkan user message dan assistant placeholder
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
-
-    // hit to api, better use stream text for showing
-    // console.log("Input: " + prompt.trim());
 
     setPrompt("");
     setIsLoading(true);
 
-    try {
-      const result = await callOpenRouter(newMessages);
-
+    // Jika belum ada token selama 5 detik, tampilkan Sunny
+    const thinkingTimer = setTimeout(() => {
       setMessages((prev) =>
         prev.map((message) =>
-          message.id === assistantMessage.id
-            ? { ...message, content: result.content, status: "done" }
+          message.id === assistantMessage.id && message.status === "loading"
+            ? { ...message, status: "thinking" }
             : message,
         ),
       );
-      console.log("Model:", result.model);
-      console.log("Usage:", result.usage);
-    } catch (e) {
-      console.log("Error calling api: " + e);
+    }, 5000);
+
+    try {
+      const result = await callOpenRouter(newMessages, assistantMessage.id);
+
+      // Ubah status menjadi selesai
       setMessages((prev) =>
         prev.map((message) =>
           message.id === assistantMessage.id
             ? {
                 ...message,
-                content: `Maaf, terjadi kesalahan: ${e.message}`,
+                content: result.content,
+                status: "done",
+              }
+            : message,
+        ),
+      );
+
+      console.log("Model:", result.model);
+      console.log("Usage:", result.usage);
+    } catch (error) {
+      console.error("OpenRouter Error:", error);
+
+      // Pertahankan teks yang sudah diterima jika stream terputus
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.id === assistantMessage.id
+            ? {
+                ...message,
+                content: message.content
+                  ? `${message.content}\n\n> Stream interrupted: ${error.message}`
+                  : `Maaf, terjadi kesalahan: ${error.message}`,
                 status: "error",
               }
             : message,
         ),
       );
     } finally {
+      clearTimeout(thinkingTimer);
       setIsLoading(false);
     }
   };
 
-  const callOpenRouter = async (newMessages) => {
+  const callOpenRouter = async (newMessages, assistantId) => {
     const response = await fetch("http://localhost:3001/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "text/event-stream",
       },
       body: JSON.stringify({
         model: selectedModel,
-        messages: newMessages,
+        messages: newMessages.map(({ role, content }) => ({
+          role,
+          content,
+        })),
       }),
     });
-    const data = await response.json();
+
+    // Handle HTTP error sebelum stream dimulai
     if (!response.ok) {
-      throw new Error(data.error || "Failed to fetch AI response");
+      const data = await response.json().catch(() => null);
+      throw new Error(data?.error || "Failed to fetch AI response");
     }
 
-    return data;
+    if (!response.body) {
+      throw new Error("Streaming response is unavailable.");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    let buffer = "";
+    let fullContent = "";
+    let model = selectedModel;
+    let usage = null;
+    let receivedDone = false;
+
+    // Memproses setiap baris SSE
+    const processLine = (line) => {
+      line = line.trim();
+
+      // Abaikan baris kosong dan SSE comments
+      if (!line || line.startsWith(":") || !line.startsWith("data:")) {
+        return;
+      }
+
+      const payload = line.slice(5).trim();
+
+      // Penanda akhir stream
+      if (payload === "[DONE]") {
+        receivedDone = true;
+        return;
+      }
+
+      const chunk = JSON.parse(payload);
+
+      // Error yang terjadi ketika stream sedang berjalan
+      if (chunk.error) {
+        throw new Error(chunk.error.message || "Streaming failed");
+      }
+
+      model = chunk.model || model;
+      usage = chunk.usage || usage;
+
+      const token = chunk.choices?.[0]?.delta?.content;
+
+      if (typeof token === "string" && token.length > 0) {
+        fullContent += token;
+
+        // Update bubble assistant yang sama
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === assistantId
+              ? {
+                  ...message,
+                  content: fullContent,
+                  status: "streaming",
+                }
+              : message,
+          ),
+        );
+      }
+    };
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split(/\r?\n/);
+
+        // Simpan bagian yang belum lengkap
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          processLine(line);
+        }
+      }
+
+      // Flush decoder dan proses sisa buffer
+      buffer += decoder.decode();
+
+      if (buffer.trim()) {
+        processLine(buffer);
+      }
+
+      if (!receivedDone) {
+        throw new Error("Streaming ended unexpectedly.");
+      }
+    } catch (error) {
+      await reader.cancel().catch(() => {});
+      throw error;
+    } finally {
+      reader.releaseLock();
+    }
+
+    return {
+      content: fullContent,
+      model,
+      usage,
+    };
   };
 
   const handleSelectModel = (e) => {

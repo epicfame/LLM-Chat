@@ -73,64 +73,107 @@ app.get("/api/models", async (req, res) => {
 });
 
 // POST: Chat completion
+
 app.post("/api/chat", async (req, res) => {
-  try {
-    const { messages, model = DEFAULT_MODEL } = req.body;
-    console.log(messages, model);
+  const { messages, model = DEFAULT_MODEL } = req.body;
 
-    if (!Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({
-        error: "Messages cannot be empty",
-      });
-    }
-
-    const conversation = messages.map((message) => ({
-      role: message.role === "ai" ? "assistant" : message.role,
-      content: message.content,
-    }));
-
-    const response = await fetch(`${OPENROUTER_URL}/chat/completions`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a helpful AI assistant. Reply using the user's language.",
-          },
-          ...conversation,
-        ],
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: data.error?.message || "OpenRouter request failed",
-      });
-    }
-
-    const answer = data.choices?.[0]?.message?.content;
-
-    res.json({
-      model: data.model,
-      content: answer,
-      usage: data.usage,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: error.message,
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({
+      error: "Messages cannot be empty",
     });
   }
+
+  const conversation = messages.map((message) => ({
+    role: message.role === "ai" ? "assistant" : message.role,
+    content: message.content,
+  }));
+
+  const controller = new AbortController();
+
+  // Batalkan request OpenRouter jika client disconnect
+  res.on("close", () => {
+    if (!res.writableEnded) {
+      controller.abort();
+    }
+  });
+
+  try {
+    const response = await fetch(
+      `${OPENROUTER_URL}/chat/completions`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          stream: true,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a helpful AI assistant. Reply using the user's language.",
+            },
+            ...conversation,
+          ],
+        }),
+        signal: controller.signal,
+      }
+    );
+
+    // Handle error sebelum streaming dimulai
+    if (!response.ok) {
+      const data = await response.json().catch(() => null);
+
+      return res.status(response.status).json({
+        error: data?.error?.message || "OpenRouter request failed",
+      });
+    }
+
+    // SSE headers
+    res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+
+    res.flushHeaders();
+
+    // Forward stream dari OpenRouter ke frontend
+    const reader = response.body.getReader();
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+        if (res.destroyed) break;
+
+        res.write(Buffer.from(value));
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    if (!res.writableEnded && !res.destroyed) {
+      res.end();
+    }
+
+  } catch (error) {
+    if (controller.signal.aborted || res.destroyed) return;
+
+    console.error("Streaming Error:", error);
+
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: error.message,
+      });
+    } else if (!res.writableEnded) {
+      res.end();
+    }
+  }
 });
+
 
 // Health check
 app.get("/api/health", (req, res) => {
