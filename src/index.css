@@ -177,3 +177,11 @@ body {
   --radius-lg: 22px;
   --radius-full: 999px;
 }
+
+img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}

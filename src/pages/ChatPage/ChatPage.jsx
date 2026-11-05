@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { ChatTextarea } from "@components/ChatTextarea/ChatTextarea";
 import { ChatLayout } from "@layouts/ChatLayout/ChatLayout";
 import { ChatHeader } from "./components/ChatHeader";
-import { Send, Paperclip } from "lucide-react";
 import { v7 as uuidv7 } from "uuid";
 import styles from "./ChatPage.module.css";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ChatMessage } from "./components/ChatMessage";
+import { ChatForm } from "./components/ChatForm";
 
 export function ChatPage() {
   const [prompt, setPrompt] = useState("");
@@ -18,7 +17,7 @@ export function ChatPage() {
 
   const chatBodyRef = useRef(null);
 
-  const handlePromptInput = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const content = prompt.trim();
@@ -238,6 +237,10 @@ export function ChatPage() {
     }
   }, [messages]);
 
+  const handleInput = (e) => {
+    setPrompt(e.target.value);
+  };
+
   return (
     <ChatLayout
       header={
@@ -247,34 +250,12 @@ export function ChatPage() {
         />
       }
       footer={
-        <form className={styles.formInput} onSubmit={handlePromptInput}>
-          <span
-            className={styles.tooltipWrapper}
-            data-tooltip="Attachment coming soon!"
-            tabIndex={0}
-          >
-            <button
-              type="button"
-              className={styles.iconButton}
-              disabled
-              aria-label="Attachment is not available yet"
-            >
-              <Paperclip size={20} />
-            </button>
-          </span>
-          <ChatTextarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-          />
-
-          <button
-            type="submit"
-            className={styles.submitButton}
-            disabled={isLoading}
-          >
-            <Send color="white" />
-          </button>
-        </form>
+        <ChatForm
+          isLoading={isLoading}
+          handleChange={handleInput}
+          handleSubmit={handleSubmit}
+          prompt={prompt}
+        />
       }
     >
       <div ref={chatBodyRef} className={styles.chatBody}>
