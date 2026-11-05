@@ -9,19 +9,24 @@ export function ChatLayout({
 }) {
   return (
     <div className={styles.container}>
+      {/* Sidebar */}
       <aside
         className={`${styles.sidebar} ${
           !isSidebarOpen ? styles.sidebarClosed : ""
         }`}
+        aria-hidden={!isSidebarOpen}
       >
         {sidebar}
       </aside>
 
-      <header className={styles.header}>{header}</header>
+      {/* Main Content */}
+      <div className={styles.content}>
+        <header className={styles.header}>{header}</header>
 
-      <main className={styles.main}>{children}</main>
+        <main className={styles.main}>{children}</main>
 
-      <footer className={styles.footer}>{footer}</footer>
+        <footer className={styles.footer}>{footer}</footer>
+      </div>
     </div>
   );
 }

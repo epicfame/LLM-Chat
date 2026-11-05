@@ -1,0 +1,195 @@
+.history {
+  --ch-primary: var(--color-primary);
+  --ch-secondary: var(--color-secondary);
+  --ch-text: var(--color-text);
+  --ch-muted: var(--color-text-muted);
+  --ch-surface: var(--color-surface);
+  --ch-background: var(--color-background);
+  --ch-border: var(--color-border);
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  font-family: var(--font-body, inherit);
+}
+
+/* ---------- New chat ---------- */
+
+.newChat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+
+  border: 0;
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  background: linear-gradient(135deg, var(--ch-primary), var(--ch-secondary));
+  box-shadow: 0 6px 16px -8px
+    color-mix(in srgb, var(--ch-secondary) 80%, transparent);
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    filter 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.newChat:hover {
+  filter: brightness(1.05);
+}
+
+.newChat:active {
+  transform: scale(0.98);
+}
+
+.newChat:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ch-primary) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.newChat:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------- Groups ---------- */
+
+.empty {
+  margin: 8px 4px;
+  color: var(--ch-muted);
+  font-size: 13px;
+}
+
+.group + .group {
+  margin-top: 4px;
+}
+
+.groupLabel {
+  margin: 0 0 4px;
+  padding: 0 10px;
+
+  color: var(--ch-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- Items ---------- */
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  border-radius: var(--radius-md);
+  transition: background-color 0.12s ease;
+}
+
+.item:hover {
+  background: color-mix(in srgb, var(--ch-secondary) 10%, transparent);
+}
+
+.active,
+.active:hover {
+  background: color-mix(in srgb, var(--ch-primary) 14%, var(--ch-surface));
+}
+
+.itemButton {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 36px 9px 10px;
+
+  border: 0;
+  border-radius: inherit;
+  color: var(--ch-text);
+  background: transparent;
+
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.active .itemButton {
+  color: color-mix(in srgb, var(--ch-primary) 65%, var(--ch-text));
+  font-weight: 800;
+}
+
+.itemButton:focus-visible,
+.delete:focus-visible {
+  outline: 2px solid var(--ch-primary);
+  outline-offset: -2px;
+}
+
+.itemButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Delete ---------- */
+
+.delete {
+  position: absolute;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ch-muted);
+  background: transparent;
+  cursor: pointer;
+
+  opacity: 0;
+  transition:
+    opacity 0.12s ease,
+    color 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.item:hover .delete,
+.item:focus-within .delete,
+.active .delete {
+  opacity: 1;
+}
+
+.delete:hover {
+  color: var(--ch-primary);
+  background: color-mix(in srgb, var(--ch-primary) 14%, transparent);
+}
+
+.delete:disabled {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* Touch screens have no hover */
+@media (hover: none) {
+  .delete {
+    opacity: 1;
+  }
+}

@@ -5,10 +5,7 @@ import process from "node:process";
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://10.8.34.42:5173",
-];
+const allowedOrigins = ["http://localhost:5173", "http://10.8.34.42:5173"];
 
 app.use(
   cors({
@@ -98,29 +95,26 @@ app.post("/api/chat", async (req, res) => {
   });
 
   try {
-    const response = await fetch(
-      `${OPENROUTER_URL}/chat/completions`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model,
-          stream: true,
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a helpful AI assistant. Reply using the user's language.",
-            },
-            ...conversation,
-          ],
-        }),
-        signal: controller.signal,
-      }
-    );
+    const response = await fetch(`${OPENROUTER_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        stream: true,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a helpful AI assistant. Reply using the user's language.",
+          },
+          ...conversation,
+        ],
+      }),
+      signal: controller.signal,
+    });
 
     // Handle error sebelum streaming dimulai
     if (!response.ok) {
@@ -158,7 +152,6 @@ app.post("/api/chat", async (req, res) => {
     if (!res.writableEnded && !res.destroyed) {
       res.end();
     }
-
   } catch (error) {
     if (controller.signal.aborted || res.destroyed) return;
 
@@ -173,7 +166,6 @@ app.post("/api/chat", async (req, res) => {
     }
   }
 });
-
 
 // Health check
 app.get("/api/health", (req, res) => {

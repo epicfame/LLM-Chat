@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { ChatLayout } from "@layouts/ChatLayout/ChatLayout";
-import { ChatHeader } from "./components/ChatHeader";
-import { v7 as uuidv7 } from "uuid";
-import styles from "./ChatPage.module.css";
-import { WelcomeScreen } from "./components/WelcomeScreen";
-import { ChatMessage } from "./components/ChatMessage";
+import { Sidebar } from "@components/Sidebar/Sidebar";
 import { ChatForm } from "./components/ChatForm";
+import { ChatHeader } from "./components/ChatHeader";
+import { ChatMessage } from "./components/ChatMessage";
+import { WelcomeScreen } from "./components/WelcomeScreen";
+import { ChatHistory } from "./components/ChatHistory"; // [history]
+import { useChatSessions } from "./hooks/useChatSessions"; // [history]
+import styles from "./ChatPage.module.css";
+import { v7 as uuidv7 } from "uuid";
 
 export function ChatPage() {
   const [prompt, setPrompt] = useState("");
@@ -14,8 +17,29 @@ export function ChatPage() {
     "nvidia/nemotron-3-ultra-550b-a55b:free",
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // [history] Sessions live beside `messages`; switching is blocked while a reply is streaming
+  const {
+    sessions,
+    activeSessionId,
+    startSession,
+    selectSession,
+    newChat,
+    deleteSession,
+  } = useChatSessions({ messages, setMessages, isBusy: isLoading });
 
   const chatBodyRef = useRef(null);
+
+  useEffect(() => {
+    const chatBody = chatBodyRef.current;
+    if (chatBody) {
+      chatBody.scrollTo({
+        top: chatBody.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +47,9 @@ export function ChatPage() {
     const content = prompt.trim();
 
     if (!content || isLoading) return;
+
+    // [history] First message of a new chat creates its session (title = this prompt)
+    startSession(content);
 
     const userMessage = {
       id: uuidv7(),
@@ -190,7 +217,6 @@ export function ChatPage() {
 
         const lines = buffer.split(/\r?\n/);
 
-        // Simpan bagian yang belum lengkap
         buffer = lines.pop() ?? "";
 
         for (const line of lines) {
@@ -224,21 +250,14 @@ export function ChatPage() {
 
   const handleSelectModel = (e) => {
     setSelectedModel(e.target.value);
-
-    console.log("Selected model:", e.target.value);
   };
-  useEffect(() => {
-    const chatBody = chatBodyRef.current;
-    if (chatBody) {
-      chatBody.scrollTo({
-        top: chatBody.scrollHeight,
-        behaviour: "smooth",
-      });
-    }
-  }, [messages]);
 
   const handleInput = (e) => {
     setPrompt(e.target.value);
+  };
+
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
@@ -247,6 +266,8 @@ export function ChatPage() {
         <ChatHeader
           selectedModel={selectedModel}
           onModelChange={handleSelectModel}
+          onToggleSidebar={handleSidebarToggle}
+          isSidebarOpen={isSidebarOpen}
         />
       }
       footer={
@@ -257,6 +278,20 @@ export function ChatPage() {
           prompt={prompt}
         />
       }
+      sidebar={
+        <Sidebar onClosed={handleSidebarToggle}>
+          {/* [history] */}
+          <ChatHistory
+            sessions={sessions}
+            activeSessionId={activeSessionId}
+            onSelect={selectSession}
+            onNew={newChat}
+            onDelete={deleteSession}
+            disabled={isLoading}
+          />
+        </Sidebar>
+      }
+      isSidebarOpen={isSidebarOpen}
     >
       <div ref={chatBodyRef} className={styles.chatBody}>
         {messages.length === 0 ? (
