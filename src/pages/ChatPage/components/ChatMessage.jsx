@@ -1,4 +1,6 @@
-import Markdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import mascotThinking from "@assets/images/mascot-thinking.svg";
 import styles from "./ChatMessage.module.css";
 
@@ -38,7 +40,9 @@ export function ChatMessage({ message }) {
   // Streaming / Done / Error
   return (
     <div className={style}>
-      <Markdown>{message.content}</Markdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {message.content}
+      </ReactMarkdown>
 
       {message.status === "streaming" && (
         <span className={styles.streamingCursor} />
