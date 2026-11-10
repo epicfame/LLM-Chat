@@ -9,7 +9,7 @@ export function Sidebar({ onClosed, children }) {
 
         <button
           type="button"
-          className="flex size-8 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0 text-text-muted transition-colors duration-200 hover:bg-surface hover:text-text"
+          className="flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0 text-text-muted transition-colors duration-200 hover:bg-surface hover:text-text"
           onClick={onClosed}
           aria-label="Close sidebar"
         >
@@ -17,7 +17,7 @@ export function Sidebar({ onClosed, children }) {
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-3">{children}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3">{children}</div>
 
       <div className="shrink-0 p-4 text-xs text-text-muted">
         <p>Do at your own risk</p>

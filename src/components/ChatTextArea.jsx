@@ -24,7 +24,7 @@ export function ChatTextarea({ value, onChange, ...props }) {
     <textarea
       {...props}
       ref={textareaRef}
-      className="box-border max-h-40 min-h-10 w-full min-w-0 resize-none overflow-y-auto border-0 p-2 leading-normal outline-none"
+      className="box-border max-h-40 min-h-10 w-full min-w-0 resize-none overflow-y-auto border-0 p-2 text-base leading-normal outline-none"
       rows={1}
       value={value}
       onChange={onChange}

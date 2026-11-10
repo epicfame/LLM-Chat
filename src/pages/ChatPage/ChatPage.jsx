@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { ChatLayout } from "@layouts/ChatLayout";
 import { Sidebar } from "@components/Sidebar";
 import { ChatForm } from "./components/ChatForm";
@@ -7,6 +7,7 @@ import { ChatMessage } from "./components/ChatMessage";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ChatHistory } from "./components/ChatHistory"; // [history]
 import { useChatSessions } from "./hooks/useChatSessions"; // [history]
+import { useIsMobile } from "./hooks/useIsMobile";
 import { v7 as uuidv7 } from "uuid";
 
 // Distance (px) from the bottom that still counts as "at the bottom".
@@ -19,7 +20,10 @@ export function ChatPage() {
     "nvidia/nemotron-3-ultra-550b-a55b:free",
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const isMobile = useIsMobile();
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const isSidebarOpen = isMobile ? mobileSidebarOpen : desktopSidebarOpen;
 
   // [history] Sessions live beside `messages`; switching is blocked while a reply is streaming
   const {
@@ -288,8 +292,14 @@ export function ChatPage() {
   };
 
   const handleSidebarToggle = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    if (isMobile) setMobileSidebarOpen((open) => !open);
+    else setDesktopSidebarOpen((open) => !open);
   };
+
+  const handleSidebarClose = useCallback(() => {
+    if (isMobile) setMobileSidebarOpen(false);
+    else setDesktopSidebarOpen(false);
+  }, [isMobile]);
 
   return (
     <ChatLayout
@@ -310,23 +320,31 @@ export function ChatPage() {
         />
       }
       sidebar={
-        <Sidebar onClosed={handleSidebarToggle}>
+        <Sidebar onClosed={handleSidebarClose}>
           {/* [history] */}
           <ChatHistory
             sessions={sessions}
             activeSessionId={activeSessionId}
-            onSelect={selectSession}
-            onNew={newChat}
+            onSelect={(id) => {
+              selectSession(id);
+              setMobileSidebarOpen(false);
+            }}
+            onNew={() => {
+              newChat();
+              setMobileSidebarOpen(false);
+            }}
             onDelete={deleteSession}
             disabled={isLoading}
           />
         </Sidebar>
       }
       isSidebarOpen={isSidebarOpen}
+      isMobile={isMobile}
+      onSidebarClose={handleSidebarClose}
     >
       <div
         ref={chatBodyRef}
-        className="flex h-full flex-col overflow-y-scroll bg-background px-[50px] py-2.5 text-text [scrollbar-width:thin] [scrollbar-color:transparent_transparent] hover:[scrollbar-color:var(--color-primary)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-primary"
+        className="flex h-full flex-col min-h-0 min-w-0 overflow-x-hidden overflow-y-auto bg-background px-1 sm:px-5 lg:px-[50px] py-2.5 text-text [scrollbar-width:thin] [scrollbar-color:transparent_transparent] hover:[scrollbar-color:var(--color-primary)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-primary"
         onScroll={handleChatScroll}
       >
         {messages.length === 0 ? (

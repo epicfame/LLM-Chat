@@ -9,20 +9,21 @@ export function ChatHeader({
   isSidebarOpen,
 }) {
   return (
-    <div className="flex items-center justify-between p-2">
-      <div className="flex items-center gap-2.5">
-        {!isSidebarOpen && (
-          <>
+    <div className="flex items-center justify-between gap-2 p-1 sm:p-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2.5">
+          <div className={`flex items-center gap-1 sm:gap-2.5 ${isSidebarOpen ? "invisible" : ""}`}>
             <button
               type="button"
               onClick={onToggleSidebar}
-              className="flex size-9 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-text transition-colors duration-200"
+              aria-label="Open sidebar"
+              aria-controls="chat-sidebar"
+              aria-expanded={isSidebarOpen}
+              className="flex size-11 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-text transition-colors duration-200"
             >
               <PanelLeft />
             </button>
-            <img src={logo} alt="DumbChat" className="block size-[34px] object-contain" />
-          </>
-        )}
+            <img src={logo} alt="DumbChat" className="hidden size-[34px] sm:block object-contain" />
+          </div>
       </div>
 
       <ModelSelection

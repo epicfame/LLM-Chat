@@ -203,12 +203,12 @@ export function ModelSelection({
   };
 
   return (
-    <div className="relative inline-flex" ref={rootRef}>
+    <div className="relative inline-flex min-w-0 max-w-full" ref={rootRef}>
       <div
         ref={triggerRef}
         role="combobox"
         tabIndex={disabled ? -1 : 0}
-        className="group inline-flex h-[38px] min-w-[170px] max-w-[280px] cursor-pointer items-center gap-2 rounded-full border border-border bg-surface pr-3 pl-[7px] text-sm leading-none font-bold text-text shadow-[0_1px_2px_rgba(59,36,22,0.06)] outline-none select-none transition-[border-color,background-color,box-shadow,transform] duration-150 hover:border-secondary hover:bg-[color-mix(in_srgb,var(--color-secondary)_6%,var(--color-surface))] active:scale-98 focus-visible:border-primary focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-primary)_18%,transparent)] aria-expanded:border-primary aria-expanded:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-primary)_18%,transparent)] aria-disabled:transform-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none aria-disabled:hover:border-border aria-disabled:hover:bg-surface motion-reduce:transition-none"
+        className="group inline-flex h-11 min-w-0 max-w-full sm:h-[38px] sm:min-w-[170px] sm:max-w-[280px] cursor-pointer items-center gap-2 rounded-full border border-border bg-surface pr-3 pl-[7px] text-sm leading-none font-bold text-text shadow-[0_1px_2px_rgba(59,36,22,0.06)] outline-none select-none transition-[border-color,background-color,box-shadow,transform] duration-150 hover:border-secondary hover:bg-[color-mix(in_srgb,var(--color-secondary)_6%,var(--color-surface))] active:scale-98 focus-visible:border-primary focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-primary)_18%,transparent)] aria-expanded:border-primary aria-expanded:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-primary)_18%,transparent)] aria-disabled:transform-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none aria-disabled:hover:border-border aria-disabled:hover:bg-surface motion-reduce:transition-none"
         aria-label="Select AI model"
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -238,7 +238,7 @@ export function ModelSelection({
           role="listbox"
           aria-label="AI models"
           className={cx(
-            "absolute z-50 m-0 box-border max-h-80 w-max min-w-[max(100%,240px)] max-w-[min(360px,calc(100vw-32px))] list-none overflow-y-auto overscroll-contain rounded-lg border border-border bg-surface p-1.5 shadow-[0_14px_34px_-10px_rgba(59,36,22,0.22),0_2px_6px_rgba(59,36,22,0.06)] [scrollbar-width:thin] [scrollbar-color:color-mix(in_srgb,var(--color-secondary)_35%,transparent)_transparent] motion-reduce:animate-none",
+            "absolute z-50 m-0 box-border max-h-[min(320px,60dvh)] w-max min-w-[max(100%,240px)] max-w-[min(360px,calc(100vw-32px))] list-none overflow-y-auto overscroll-contain rounded-lg border border-border bg-surface p-1.5 shadow-[0_14px_34px_-10px_rgba(59,36,22,0.22),0_2px_6px_rgba(59,36,22,0.06)] [scrollbar-width:thin] [scrollbar-color:color-mix(in_srgb,var(--color-secondary)_35%,transparent)_transparent] motion-reduce:animate-none",
             dropUp ? "bottom-[calc(100%+8px)] animate-list-in-up" : "top-[calc(100%+8px)] animate-list-in",
             alignEnd ? "right-0" : "left-0",
             dropUp ? (alignEnd ? "origin-bottom-right" : "origin-bottom-left") : (alignEnd ? "origin-top-right" : "origin-top-left"),
@@ -259,7 +259,7 @@ export function ModelSelection({
                 onClick={() => choose(item)}
               >
                 <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
-                  <span className="flex items-center gap-1.5 text-sm leading-[1.25] font-bold group-aria-selected:text-[color-mix(in_srgb,var(--color-primary)_72%,#3b2416)]">
+                  <span className="flex flex-wrap items-center gap-1.5 wrap-anywhere text-sm leading-[1.25] font-bold group-aria-selected:text-[color-mix(in_srgb,var(--color-primary)_72%,#3b2416)]">
                     {item.name}
                     {item.badge && (
                       <span className="rounded-full bg-lemon/25 px-[7px] py-0.5 text-[10px] font-extrabold tracking-[0.03em] text-[color-mix(in_srgb,var(--color-lemon)_45%,#3b2416)] uppercase">{item.badge}</span>

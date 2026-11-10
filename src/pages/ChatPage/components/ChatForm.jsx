@@ -40,15 +40,15 @@ import { Paperclip, Send } from "lucide-react";
  */
 export function ChatForm({ prompt, handleSubmit, isLoading, handleChange }) {
   return (
-    <form className="flex items-center gap-2.5 rounded-lg border border-border bg-surface p-1.5 transition-[border-color,box-shadow] duration-200 focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgba(251,113,133,0.12)]" onSubmit={handleSubmit}>
+    <form className="flex items-center gap-1.5 sm:gap-2.5 rounded-lg border border-border bg-surface p-1.5 transition-[border-color,box-shadow] duration-200 focus-within:border-primary focus-within:shadow-[0_0_0_3px_rgba(251,113,133,0.12)]" onSubmit={handleSubmit}>
       <span
-        className="relative inline-flex items-center after:pointer-events-none after:invisible after:absolute after:bottom-[calc(100%+10px)] after:left-1/2 after:z-10 after:-translate-x-1/2 after:translate-y-[5px] after:rounded-md after:bg-text after:px-3 after:py-[7px] after:text-xs after:font-semibold after:whitespace-nowrap after:text-white after:opacity-0 after:transition-all after:duration-200 after:content-[attr(data-tooltip)] hover:after:visible hover:after:translate-y-0 hover:after:opacity-100 focus-visible:after:visible focus-visible:after:translate-y-0 focus-visible:after:opacity-100"
+        className="relative inline-flex shrink-0 items-center after:pointer-events-none after:invisible after:absolute after:bottom-[calc(100%+10px)] after:left-0 sm:after:left-1/2 after:z-10 sm:after:-translate-x-1/2 after:translate-y-[5px] after:rounded-md after:bg-text after:px-3 after:py-[7px] after:text-xs after:font-semibold after:whitespace-nowrap after:text-white after:opacity-0 after:transition-all after:duration-200 after:content-[attr(data-tooltip)] hover:after:visible hover:after:translate-y-0 hover:after:opacity-100 focus-visible:after:visible focus-visible:after:translate-y-0 focus-visible:after:opacity-100"
         data-tooltip="Attachment coming soon!"
         tabIndex={0}
       >
         <button
           type="button"
-          className="flex cursor-not-allowed items-center justify-center rounded-md border-0 bg-transparent p-2 text-text-muted opacity-45"
+          className="flex size-11 shrink-0 cursor-not-allowed items-center justify-center rounded-md border-0 bg-transparent p-2 text-text-muted opacity-45"
           disabled
           aria-label="Attachment is not available yet"
         >
@@ -59,7 +59,8 @@ export function ChatForm({ prompt, handleSubmit, isLoading, handleChange }) {
 
       <button
         type="submit"
-        className="flex cursor-pointer items-center justify-center rounded-md border-0 bg-secondary px-2.5 py-1.5 text-white transition-[background,transform] duration-200 hover:bg-[#ea7b27] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+        aria-label="Send message"
+        className="flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-secondary px-2.5 py-1.5 text-white transition-[background,transform] duration-200 hover:bg-[#ea7b27] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={isLoading}
       >
         <Send color="white" />

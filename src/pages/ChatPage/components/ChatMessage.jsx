@@ -34,12 +34,12 @@ function MarkdownCodeBlock({ children }) {
 
   return (
     <div className="my-3.5 overflow-hidden rounded-md border border-border bg-[#263238]">
-      <div className="flex items-center justify-between bg-[#1e293b] px-3.5 py-[9px] text-xs font-semibold text-[#d1d5db]">
-        <span>{language}</span>
+      <div className="flex items-center justify-between gap-2 bg-[#1e293b] px-3.5 py-[9px] text-xs font-semibold text-[#d1d5db]">
+        <span className="min-w-0 truncate">{language}</span>
 
         <button
           type="button"
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-[5px] text-[#d1d5db] transition-colors duration-150 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-sm border border-transparent bg-transparent px-2 py-[5px] text-[#d1d5db] transition-colors duration-150 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           onClick={handleCopy}
           aria-label={copied ? "Copied code" : "Copy code"}
         >
@@ -55,9 +55,17 @@ function MarkdownCodeBlock({ children }) {
   );
 }
 
+function MarkdownTable({ children }) {
+  return (
+    <div className="max-w-full overflow-x-auto overscroll-x-contain" tabIndex={0} role="region" aria-label="Scrollable table">
+      <table>{children}</table>
+    </div>
+  );
+}
+
 export function ChatMessage({ message }) {
   const isUser = message.role === "user";
-  const style = isUser ? "block w-fit max-w-[min(400px,85%)] self-end rounded-lg rounded-br-sm border border-primary bg-primary px-2.5 py-1.5 wrap-break-word text-white not-last:mb-3" : "block w-full max-w-[800px] self-start rounded-md border border-border border-l-4 border-l-mint bg-surface px-4 py-3 leading-[1.7] wrap-break-word text-text first:mt-0 not-last:mb-3 [&_p]:mb-3 [&_p]:leading-[1.7] [&_p:last-child]:mb-0 [&_:is(h1,h2,h3)]:mt-5 [&_:is(h1,h2,h3)]:mb-2.5 [&_:is(h1,h2,h3)]:font-bold [&_:is(h1,h2,h3)]:leading-[1.4] [&_:is(h1,h2,h3)]:text-text [&_strong]:text-primary [&_a]:text-primary [&_a]:underline [&_a]:wrap-anywhere [&_:is(ul,ol)]:my-2.5 [&_:is(ul,ol)]:pl-6 [&_li]:my-[5px] [&_li]:leading-[1.6] [&_table]:my-4 [&_table]:w-full [&_table]:table-auto [&_table]:border-collapse [&_table]:text-sm [&_table]:leading-[1.6] [&_thead]:bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-surface))] [&_:is(th,td)]:border [&_:is(th,td)]:border-border [&_:is(th,td)]:px-3 [&_:is(th,td)]:py-2.5 [&_:is(th,td)]:text-left [&_:is(th,td)]:align-top [&_:is(th,td)]:text-text [&_th]:font-bold [&_tbody_tr:nth-child(even)]:bg-[color-mix(in_srgb,var(--color-background)_65%,var(--color-surface))] [&_pre]:max-w-full [&_code]:font-[monospace] [&_pre_code]:text-inherit [&_blockquote]:my-3 [&_blockquote]:rounded-r-sm [&_blockquote]:border-l-[3px] [&_blockquote]:border-primary [&_blockquote]:bg-[color-mix(in_srgb,var(--color-primary)_7%,var(--color-surface))] [&_blockquote]:px-3.5 [&_blockquote]:py-2.5 [&_hr]:my-5 [&_hr]:border-0 [&_hr]:border-t [&_hr]:border-border";
+  const style = isUser ? "block min-w-0 shrink-0 w-fit max-w-[min(400px,85%)] self-end rounded-lg rounded-br-sm border border-primary bg-primary px-2.5 py-1.5 wrap-anywhere text-white not-last:mb-3" : "block min-w-0 shrink-0 w-full max-w-[800px] self-start rounded-md border border-border border-l-4 border-l-mint bg-surface px-3 py-3 sm:px-4 leading-[1.7] wrap-anywhere text-text first:mt-0 not-last:mb-3 [&_p]:mb-3 [&_p]:leading-[1.7] [&_p:last-child]:mb-0 [&_:is(h1,h2,h3)]:mt-5 [&_:is(h1,h2,h3)]:mb-2.5 [&_:is(h1,h2,h3)]:font-bold [&_:is(h1,h2,h3)]:leading-[1.4] [&_:is(h1,h2,h3)]:text-text [&_strong]:text-primary [&_a]:text-primary [&_a]:underline [&_a]:wrap-anywhere [&_:is(ul,ol)]:my-2.5 [&_:is(ul,ol)]:pl-6 [&_li]:my-[5px] [&_li]:leading-[1.6] [&_table]:my-4 [&_table]:w-full [&_table]:table-auto [&_table]:border-collapse [&_table]:text-sm [&_table]:leading-[1.6] [&_thead]:bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-surface))] [&_:is(th,td)]:border [&_:is(th,td)]:border-border [&_:is(th,td)]:px-3 [&_:is(th,td)]:py-2.5 [&_:is(th,td)]:text-left [&_:is(th,td)]:align-top [&_:is(th,td)]:text-text [&_th]:font-bold [&_tbody_tr:nth-child(even)]:bg-[color-mix(in_srgb,var(--color-background)_65%,var(--color-surface))] [&_pre]:max-w-full [&_code]:font-[monospace] [&_pre_code]:text-inherit [&_blockquote]:my-3 [&_blockquote]:rounded-r-sm [&_blockquote]:border-l-[3px] [&_blockquote]:border-primary [&_blockquote]:bg-[color-mix(in_srgb,var(--color-primary)_7%,var(--color-surface))] [&_blockquote]:px-3.5 [&_blockquote]:py-2.5 [&_hr]:my-5 [&_hr]:border-0 [&_hr]:border-t [&_hr]:border-border";
 
   // Loading: tiga titik
   if (message.status === "loading") {
@@ -80,7 +88,7 @@ export function ChatMessage({ message }) {
           <img
             src={mascotThinking}
             alt="Sunny is thinking"
-            className="size-16 animate-mascot-bounce object-contain motion-reduce:animate-none"
+            className="size-16 shrink-0 animate-mascot-bounce object-contain motion-reduce:animate-none"
           />
           <span>Sunny is thinking...</span>
         </div>
@@ -91,7 +99,7 @@ export function ChatMessage({ message }) {
   // Streaming / Done / Error
   return (
     <div className={style}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ pre: MarkdownCodeBlock }}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ pre: MarkdownCodeBlock, table: MarkdownTable }}>
         {message.content}
       </ReactMarkdown>
 
