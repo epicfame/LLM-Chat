@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import styles from "./ChatTextarea.module.css";
 
 export function ChatTextarea({ value, onChange, ...props }) {
   const textareaRef = useRef(null);
@@ -25,7 +24,7 @@ export function ChatTextarea({ value, onChange, ...props }) {
     <textarea
       {...props}
       ref={textareaRef}
-      className={styles.textarea}
+      className="box-border max-h-40 min-h-10 w-full min-w-0 resize-none overflow-y-auto border-0 p-2 leading-normal outline-none"
       rows={1}
       value={value}
       onChange={onChange}

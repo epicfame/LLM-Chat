@@ -1,14 +1,16 @@
-import { useState, useRef, useEffect } from "react";
-import { ChatLayout } from "@layouts/ChatLayout/ChatLayout";
-import { Sidebar } from "@components/Sidebar/Sidebar";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { ChatLayout } from "@layouts/ChatLayout";
+import { Sidebar } from "@components/Sidebar";
 import { ChatForm } from "./components/ChatForm";
 import { ChatHeader } from "./components/ChatHeader";
 import { ChatMessage } from "./components/ChatMessage";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ChatHistory } from "./components/ChatHistory"; // [history]
 import { useChatSessions } from "./hooks/useChatSessions"; // [history]
-import styles from "./ChatPage.module.css";
 import { v7 as uuidv7 } from "uuid";
+
+// Distance (px) from the bottom that still counts as "at the bottom".
+const BOTTOM_THRESHOLD_PX = 80;
 
 export function ChatPage() {
   const [prompt, setPrompt] = useState("");
@@ -30,15 +32,41 @@ export function ChatPage() {
   } = useChatSessions({ messages, setMessages, isBusy: isLoading });
 
   const chatBodyRef = useRef(null);
+  // Auto-scroll only while the user is following the bottom of the chat.
+  const autoScrollRef = useRef(true);
+  const lastScrollTopRef = useRef(0);
 
-  useEffect(() => {
+  const handleChatScroll = () => {
     const chatBody = chatBodyRef.current;
-    if (chatBody) {
-      chatBody.scrollTo({
-        top: chatBody.scrollHeight,
-        behavior: "smooth",
-      });
+    if (!chatBody) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = chatBody;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    const scrolledUp = scrollTop < lastScrollTopRef.current;
+
+    if (scrolledUp && distanceFromBottom > 1) {
+      // User scrolled up: stop forcing them to the bottom.
+      autoScrollRef.current = false;
+    } else if (distanceFromBottom <= BOTTOM_THRESHOLD_PX) {
+      // User is back near the bottom: resume auto-scroll.
+      autoScrollRef.current = true;
     }
+
+    lastScrollTopRef.current = scrollTop;
+  };
+
+  // Opening another session or a new chat always starts at the bottom.
+  // Declared before the scroll effect so it runs first in the same commit.
+  useEffect(() => {
+    autoScrollRef.current = true;
+  }, [activeSessionId]);
+
+  useLayoutEffect(() => {
+    const chatBody = chatBodyRef.current;
+    if (!chatBody || !autoScrollRef.current) return;
+
+    // Instant jump: a smooth animation restarted on every streamed token lags and stutters.
+    chatBody.scrollTop = chatBody.scrollHeight;
   }, [messages]);
 
   const handleSubmit = async (e) => {
@@ -50,6 +78,9 @@ export function ChatPage() {
 
     // [history] First message of a new chat creates its session (title = this prompt)
     startSession(content);
+
+    // Sending a message always jumps back to the latest reply.
+    autoScrollRef.current = true;
 
     const userMessage = {
       id: uuidv7(),
@@ -293,7 +324,11 @@ export function ChatPage() {
       }
       isSidebarOpen={isSidebarOpen}
     >
-      <div ref={chatBodyRef} className={styles.chatBody}>
+      <div
+        ref={chatBodyRef}
+        className="flex h-full flex-col overflow-y-scroll bg-background px-[50px] py-2.5 text-text [scrollbar-width:thin] [scrollbar-color:transparent_transparent] hover:[scrollbar-color:var(--color-primary)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-primary"
+        onScroll={handleChatScroll}
+      >
         {messages.length === 0 ? (
           <WelcomeScreen />
         ) : (

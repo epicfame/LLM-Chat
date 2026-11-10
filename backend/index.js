@@ -248,7 +248,7 @@ to user privacy and safety.
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:5173", "http://10.8.34.42:5173"];
+const allowedOrigins = ["*"];
 
 app.use(
   cors({

@@ -1,7 +1,6 @@
 import { ModelSelection } from "./ModelSelection";
 import logo from "@assets/logo/logo-dumbai.gif";
 import { PanelLeft } from "lucide-react";
-import styles from "./ChatHeader.module.css";
 
 export function ChatHeader({
   selectedModel,
@@ -10,18 +9,18 @@ export function ChatHeader({
   isSidebarOpen,
 }) {
   return (
-    <div className={styles.container}>
-      <div className={styles.brand}>
+    <div className="flex items-center justify-between p-2">
+      <div className="flex items-center gap-2.5">
         {!isSidebarOpen && (
           <>
             <button
               type="button"
               onClick={onToggleSidebar}
-              className={styles.toggleButton}
+              className="flex size-9 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-text transition-colors duration-200"
             >
               <PanelLeft />
             </button>
-            <img src={logo} alt="DumbChat" className={styles.logo} />
+            <img src={logo} alt="DumbChat" className="block size-[34px] object-contain" />
           </>
         )}
       </div>

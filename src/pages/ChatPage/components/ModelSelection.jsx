@@ -1,6 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Check, ChevronDown, Sparkles } from "lucide-react";
-import styles from "./ModelSelection.module.css";
 
 const normalize = (option) =>
   typeof option === "string"
@@ -204,12 +203,12 @@ export function ModelSelection({
   };
 
   return (
-    <div className={styles.container} ref={rootRef}>
+    <div className="relative inline-flex" ref={rootRef}>
       <div
         ref={triggerRef}
         role="combobox"
         tabIndex={disabled ? -1 : 0}
-        className={styles.trigger}
+        className="group inline-flex h-[38px] min-w-[170px] max-w-[280px] cursor-pointer items-center gap-2 rounded-full border border-border bg-surface pr-3 pl-[7px] text-sm leading-none font-bold text-text shadow-[0_1px_2px_rgba(59,36,22,0.06)] outline-none select-none transition-[border-color,background-color,box-shadow,transform] duration-150 hover:border-secondary hover:bg-[color-mix(in_srgb,var(--color-secondary)_6%,var(--color-surface))] active:scale-98 focus-visible:border-primary focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-primary)_18%,transparent)] aria-expanded:border-primary aria-expanded:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-primary)_18%,transparent)] aria-disabled:transform-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none aria-disabled:hover:border-border aria-disabled:hover:bg-surface motion-reduce:transition-none"
         aria-label="Select AI model"
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -221,15 +220,15 @@ export function ModelSelection({
         onClick={() => (open ? closeList() : openList())}
         onKeyDown={handleKeyDown}
       >
-        <span className={styles.icon} aria-hidden="true">
+        <span className="grid size-6 flex-none place-items-center rounded-full bg-linear-[135deg,var(--color-primary),var(--color-secondary)] text-white" aria-hidden="true">
           <Sparkles size={13} strokeWidth={2.5} />
         </span>
 
-        <span className={cx(styles.value, !selected && styles.placeholder)}>
+        <span className={cx("min-w-0 flex-1 truncate text-left", !selected && "font-semibold text-text-muted")}>
           {disabled ? emptyLabel : (selected?.name ?? placeholder)}
         </span>
 
-        <ChevronDown size={16} className={styles.chevron} aria-hidden="true" />
+        <ChevronDown size={16} className="flex-none text-text-muted transition-[transform,color] duration-200 group-hover:text-secondary group-aria-expanded:rotate-180 group-aria-expanded:text-primary motion-reduce:transition-none" aria-hidden="true" />
       </div>
 
       {open && (
@@ -239,9 +238,10 @@ export function ModelSelection({
           role="listbox"
           aria-label="AI models"
           className={cx(
-            styles.list,
-            dropUp && styles.up,
-            alignEnd && styles.end,
+            "absolute z-50 m-0 box-border max-h-80 w-max min-w-[max(100%,240px)] max-w-[min(360px,calc(100vw-32px))] list-none overflow-y-auto overscroll-contain rounded-lg border border-border bg-surface p-1.5 shadow-[0_14px_34px_-10px_rgba(59,36,22,0.22),0_2px_6px_rgba(59,36,22,0.06)] [scrollbar-width:thin] [scrollbar-color:color-mix(in_srgb,var(--color-secondary)_35%,transparent)_transparent] motion-reduce:animate-none",
+            dropUp ? "bottom-[calc(100%+8px)] animate-list-in-up" : "top-[calc(100%+8px)] animate-list-in",
+            alignEnd ? "right-0" : "left-0",
+            dropUp ? (alignEnd ? "origin-bottom-right" : "origin-bottom-left") : (alignEnd ? "origin-top-right" : "origin-top-left"),
           )}
         >
           {items.map((item, index) => {
@@ -252,24 +252,21 @@ export function ModelSelection({
                 id={optionId(index)}
                 role="option"
                 aria-selected={isSelected}
-                className={cx(
-                  styles.option,
-                  index === activeIndex && styles.active,
-                  isSelected && styles.selected,
-                )}
+                className="group flex cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-[9px] text-text transition-colors duration-150 [&+li]:mt-0.5 data-[active=true]:bg-secondary/12 aria-selected:bg-primary/9 aria-selected:data-[active=true]:bg-primary/15 motion-reduce:transition-none"
+                data-active={index === activeIndex}
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => choose(item)}
               >
-                <span className={styles.optionText}>
-                  <span className={styles.optionName}>
+                <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                  <span className="flex items-center gap-1.5 text-sm leading-[1.25] font-bold group-aria-selected:text-[color-mix(in_srgb,var(--color-primary)_72%,#3b2416)]">
                     {item.name}
                     {item.badge && (
-                      <span className={styles.badge}>{item.badge}</span>
+                      <span className="rounded-full bg-lemon/25 px-[7px] py-0.5 text-[10px] font-extrabold tracking-[0.03em] text-[color-mix(in_srgb,var(--color-lemon)_45%,#3b2416)] uppercase">{item.badge}</span>
                     )}
                   </span>
                   {item.description && (
-                    <span className={styles.optionDescription}>
+                    <span className="text-xs leading-[1.35] font-medium text-text-muted">
                       {item.description}
                     </span>
                   )}
@@ -278,7 +275,7 @@ export function ModelSelection({
                 <Check
                   size={16}
                   strokeWidth={2.75}
-                  className={styles.check}
+                  className="flex-none scale-60 text-primary opacity-0 transition-[opacity,transform] duration-150 group-aria-selected:scale-100 group-aria-selected:opacity-100 motion-reduce:transition-none"
                   aria-hidden="true"
                 />
               </li>

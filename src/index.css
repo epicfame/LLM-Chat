@@ -1,156 +1,9 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
-   v2.0 | 20110126
-   License: none (public domain)
-*/
+@import "tailwindcss";
 
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-i,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
-  display: block;
-}
-body {
-  line-height: 1;
-}
-ol,
-ul {
-  list-style: none;
-}
-blockquote,
-q {
-  quotes: none;
-}
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-  content: "";
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
+/* Shared design tokens and animations for Tailwind utilities. */
+@theme static {
+  --font-sans: Inter, Roboto, Helvetica, Arial, sans-serif;
 
-html {
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
-body {
-  font-family: Inter, Roboto, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.4;
-  color: #1e1e1e;
-  background-color: var(--color-background);
-  color: var(--color-text);
-}
-
-/* Color */
-:root {
   /* Background */
   --color-background: #fff9ef;
   --color-surface: #ffffff;
@@ -171,17 +24,58 @@ body {
   /* Border */
   --color-border: #f1dccb;
 
-  /* Radius */
+  /* Radius (overrides Tailwind's default rounded-sm / rounded-md / rounded-lg) */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 22px;
   --radius-full: 999px;
+
+  --animate-typing: typing 1.2s ease-in-out infinite;
+  --animate-mascot-bounce: mascot-bounce 1.5s ease-in-out infinite;
+  --animate-mascot-float: mascot-float 3s ease-in-out infinite;
+  --animate-cursor-blink: cursor-blink 0.8s infinite;
+  --animate-list-in: list-in 0.16s ease-out;
+  --animate-list-in-up: list-in-up 0.16s ease-out;
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  @keyframes mascot-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(4deg); }
+  }
+
+  @keyframes mascot-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes cursor-blink {
+    50% { opacity: 0; }
+  }
+
+  @keyframes list-in {
+    from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  }
+
+  @keyframes list-in-up {
+    from { opacity: 0; transform: translateY(4px) scale(0.97); }
+  }
 }
 
-img {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-user-drag: none;
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-background text-base/[1.4] text-text;
+  }
+
+  img {
+    @apply select-none;
+    -webkit-user-drag: none; /* no Tailwind utility for this */
+  }
 }
